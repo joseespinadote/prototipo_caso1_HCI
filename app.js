@@ -130,32 +130,190 @@ const MenuSuperior = (props) => {
   );
 };
 
-const Cancion = (props) => {
-  return <pre>{JSON.stringify(props.cancion)}</pre>;
+const Explorador = (props) => {
+  return (
+    <div>
+      <h3>Busca inspiración en canciones de otros artístas</h3>
+      {props.canciones && (
+        <div>
+          <form>
+            <div className="form-group">
+              <input
+                className="form-control"
+                placeholder="Buscar (no funciona)"
+              />
+            </div>
+          </form>
+          <ul className="list-group">
+            {props.canciones.map((item, index) => {
+              return (
+                <li
+                  key={index}
+                  className="list-group-item"
+                  onClick={() => {
+                    props.dispatcher({
+                      type: "SELECT_SONG",
+                      cancion: item,
+                      modo: "Cancionando",
+                    });
+                  }}
+                >
+                  {item.nombre}{" "}
+                  <small>
+                    <i>por {item.autor}</i>
+                  </small>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
 };
+
+const Cancion = (props) => {
+  return (
+    <div>
+      <div className="row">
+        <div className="col">
+          <h3>{props.cancion.nombre}</h3>
+          <small>
+            <i>por {props.cancion.autor}</i>
+          </small>
+        </div>
+        <div className="col">
+          <img
+            className="m-1"
+            src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fplay-icon.png?v=1603392461768"
+            width="25px"
+          />
+          <img
+            className="m-1"
+            src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fshare.png?v=1603384818355"
+            width="25px"
+          />
+        </div>
+      </div>
+      {props.cancion.pistas.length > 0 ? (
+        <div>
+          <ul className="list-group">
+            {props.cancion.pistas.map((item, index) => {
+              return (
+                <li
+                  key={index}
+                  className="list-group-item list-group-item-action"
+                  onClick={() => {
+                    alert(
+                      "Aqui se supone que se podrá ver el detalle de las pistas, editar las propias, y proponer cambios en canciones ajenas. No está implementado"
+                    );
+                  }}
+                >
+                  <img width="50px" src={item.icono} />
+                  {item.nombre}
+                  <img
+                    width="100%"
+                    src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fwave.jpg?v=1603311447409"
+                  />
+                </li>
+              );
+            })}
+          </ul>
+          {props.cancion.autor == props.usuario ? (
+            <div>
+              <button
+                className="btn btn-primary m-1"
+                type="button"
+                onClick={() => {
+                  props.dispatcher({
+                    type: "NEW_TRACK",
+                    modo: "Pisteando",
+                  });
+                }}
+              >
+                Nueva pista
+              </button>
+              <button
+                className="btn btn-secondary m-1"
+                type="button"
+                onClick={() => {
+                  alert(
+                    "Aun no implentado. Una canción consolidada no se puede editar"
+                  );
+                }}
+              >
+                Consolidar
+              </button>
+            </div>
+          ) : (
+            <div>
+              <button
+                className="btn btn-primary m-2"
+                type="button"
+                onClick={() => {
+                  alert(
+                    "No programado aun, pero la idea es grabar y enviar una pista y ver si el autor de la canción aprueba tu propuesta"
+                  );
+                }}
+              >
+                Proponer pista al autor
+              </button>
+              <button
+                className="btn btn-success m-2"
+                type="button"
+                onClick={() => {
+                  let copia = Object.assign({}, props.cancion);
+                  copia.autor = props.usuario;
+                  alert(
+                    "Se clonará la canción, aparecerá como tuya en 'mis canciones'"
+                  );
+                  props.dispatcher({
+                    type: "CLONE_SONG",
+                    copia: copia,
+                    modo: "Mis canciones",
+                  });
+                }}
+              >
+                Clonar canción
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          <h3>¡Tu canción aún no tiene pistas!</h3>
+          <button
+            className="btn btn-primary"
+            type="button"
+            onClick={() => {
+              props.dispatcher({
+                type: "NEW_TRACK",
+                modo: "Pisteando",
+              });
+            }}
+          >
+            Añade la primera pista
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const NuevaCancion = (props) => {
   var nombreCancion = "";
   return (
     <form className="m-2">
       <div className="form-group">
-        <label htmlFor="exampleInputEmail1">
+        <label htmlFor="nombreCancion">
           Ingresa el nombre de tu nueva canción
         </label>
         <input
           className="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
+          id="nombreCancion"
           onChange={(e) => {
             nombreCancion = e.target.value;
           }}
-        />
-      </div>
-      <div className="form-group">
-        <label htmlFor="exampleInputPassword1">Ingresa tu contraseña</label>
-        <input
-          type="password"
-          className="form-control"
-          id="exampleInputPassword1"
         />
       </div>
       <button
@@ -164,7 +322,11 @@ const NuevaCancion = (props) => {
         onClick={() => {
           props.dispatcher({
             type: "NEW_SONG",
-            nuevaCancion: { nombre: nombreCancion },
+            nuevaCancion: {
+              nombre: nombreCancion,
+              pistas: [],
+              autor: props.usuario,
+            },
             modo: "Cancionando",
           });
         }}
@@ -174,6 +336,118 @@ const NuevaCancion = (props) => {
     </form>
   );
 };
+
+const Pista = (props) => {
+  return (
+    <div>
+      <h3>
+        {props.pista.nombre ? props.pista.nombre : "Ingrese un nombre de pista"}
+      </h3>
+      <form>
+        <div className="form-group">
+          <input
+            className="form-control"
+            value={props.pista.nombre}
+            onChange={(e) => {
+              props.dispatcher({
+                type: "SET_TRACK_NAME",
+                value: e.target.value,
+              });
+            }}
+            placeholder="Nombre de la pista"
+          />
+        </div>
+      </form>
+      <h3>Seleccione un instrumento</h3>
+      <div className="container">
+        <div className="row justify-content-sm-center">
+          <div
+            className={
+              "col-sm " +
+              (props.pista.icono ==
+              "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Ficono.png?v=1603311389277"
+                ? "bg-primary"
+                : "")
+            }
+          >
+            <img
+              width="50px"
+              src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Ficono.png?v=1603311389277"
+              onClick={() => {
+                props.dispatcher({
+                  type: "SET_TRACK_ICON",
+                  value:
+                    "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Ficono.png?v=1603311389277",
+                });
+              }}
+            />
+          </div>
+          <div
+            className={
+              "col-sm " +
+              (props.pista.icono ==
+              "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fkeyboard_icon.png?v=1603311389334"
+                ? "bg-primary"
+                : "")
+            }
+          >
+            <img
+              width="50px"
+              src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fkeyboard_icon.png?v=1603311389334"
+              onClick={() => {
+                props.dispatcher({
+                  type: "SET_TRACK_ICON",
+                  value:
+                    "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fkeyboard_icon.png?v=1603311389334",
+                });
+              }}
+            />
+          </div>
+          <div
+            className={
+              "col-sm " +
+              (props.pista.icono ==
+              "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fdrums_icon.png?v=1603311389053"
+                ? "bg-primary"
+                : "")
+            }
+          >
+            <img
+              width="50px"
+              src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fdrums_icon.png?v=1603311389053"
+              onClick={() => {
+                props.dispatcher({
+                  type: "SET_TRACK_ICON",
+                  value:
+                    "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fdrums_icon.png?v=1603311389053",
+                });
+              }}
+            />
+          </div>
+        </div>
+      </div>
+      <h3>¡Ha grabar! (no funciona)</h3>
+      <img
+        width="50%"
+        src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Frecording_buttons.png?v=1603384814975"
+      />
+      <img
+        width="100%"
+        src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fwave.jpg?v=1603311447409"
+      />
+      <button
+        disabled={!props.pista.nombre || !props.pista.icono}
+        className="btn btn-primary m-2"
+        onClick={() => {
+          props.dispatcher({ type: "SAVE_TRACK", modo: "Cancionando" });
+        }}
+      >
+        ¡Listo!
+      </button>
+    </div>
+  );
+};
+
 const MiResumen = (props) => {
   return (
     <div>
@@ -204,6 +478,7 @@ const MiResumen = (props) => {
           Otras noticias irían aqui...
         </li>
       </ul>
+      <hr />
       <h4>Mis últimas canciones</h4>
       {props.canciones.length > 0 ? (
         <ul>
@@ -224,8 +499,20 @@ const MiResumen = (props) => {
           </button>
         </div>
       )}
+      <hr />
       <h4>Mis grupos recientes</h4>
       Esta funcionalidad no está programada aún
+      <hr />
+      <h4>Explora música de otros autores</h4>
+      ¡Y copia y modifica sus canciones sin culpa!
+      <button
+        className="btn btn-primary m-2"
+        onClick={() => {
+          props.dispatcher({ type: "CHANGE_MODE", modo: "Exploración" });
+        }}
+      >
+        Explorar música de otros autores
+      </button>
     </div>
   );
 };
@@ -263,6 +550,14 @@ const MisCanciones = (props) => {
               );
             })}{" "}
           </ul>
+          <button
+            className="btn btn-primary m-2"
+            onClick={() => {
+              props.dispatcher({ type: "CHANGE_MODE", modo: "Nueva canción" });
+            }}
+          >
+            Nueva canción
+          </button>
         </div>
       ) : (
         <div>
@@ -311,10 +606,9 @@ const App = (props) => {
         {props.modo == "Inicia sesión" && (
           <form className="m-2">
             <div className="form-group">
-              <label htmlFor="exampleInputEmail1">
-                Ingresa tu usuario o correo electrónico
-              </label>
+              <label htmlFor="exampleInputEmail1">Ingresa tu usuario</label>
               <input
+                placeholder="Cualquier cosa sin contraseña"
                 className="form-control"
                 id="exampleInputEmail1"
                 aria-describedby="emailHelp"
@@ -337,6 +631,10 @@ const App = (props) => {
               className="btn btn-primary"
               type="button"
               onClick={() => {
+                if (nombreUsuario.length == 0) {
+                  alert("Debes poner un nombre para que esta cosa funcione");
+                  return;
+                }
                 props.dispatch({
                   type: "LOGIN_LOGOUT",
                   sesion: { nombre: nombreUsuario },
@@ -369,11 +667,11 @@ const App = (props) => {
         {props.modo == "Bienvenida" && (
           <div className="text-center">
             <h2 className="m-3">Compone música y compártela al mundo</h2>
-            <hl />
+            <hr />
             <p className="font-weight-bold">
               Sé parte de blah blah blah blah blah blah blah blah
             </p>
-            <hl />
+            <hr />
             <ul className="list-group list-group-flush">
               <li className="list-group-item">
                 Compone música, por pistas, libre de derechos de autor
@@ -400,20 +698,73 @@ const App = (props) => {
             </button>
           </div>
         )}
-        {props.modo == "Mi perfil" && <div>mi perfil</div>}
+        {props.modo == "Mi perfil" && (
+          <div>
+            <h3>Mi perfil</h3>
+            <ul>
+              <li>Nombre de usuario: {props.sesion.nombre}</li>
+              <li>Num. de visitas: xxx</li>
+              <li>Num. de canciones: {props.canciones.length}</li>
+              <li>Num. de grupos: {props.grupos.length}</li>
+            </ul>
+            <button
+              className="btn btn-primary btn-sm m-1"
+              type="button"
+              onClick={() => {
+                alert("No implementado");
+              }}
+            >
+              Cambiar contraseña
+            </button>
+            <button
+              className="btn btn-danger btn-sm m-1"
+              type="button"
+              onClick={() => {
+                alert("Tampoco esta implementado");
+              }}
+            >
+              Eliminar cuenta
+            </button>
+          </div>
+        )}
         {props.modo == "Mis canciones" && (
           <MisCanciones
             canciones={props.canciones}
             dispatcher={props.dispatch}
           />
         )}
-        {props.modo == "Mis grupos" && <div>Mis grupos</div>}
-        {props.modo == "Exploración" && <div>Exploración</div>}
+        {props.modo == "Mis grupos" && (
+          <div>
+            <h3>Mis grupos</h3>
+            <p>
+              Acá se supone que se podrán hacer grupos con diferente usuarios.
+              No está implementado
+            </p>
+          </div>
+        )}
+        {props.modo == "Exploración" && (
+          <div>
+            <Explorador
+              dispatcher={props.dispatch}
+              canciones={props.otrasCanciones}
+            />
+          </div>
+        )}
         {props.modo == "Nueva canción" && (
-          <NuevaCancion dispatcher={props.dispatch} />
+          <NuevaCancion
+            dispatcher={props.dispatch}
+            usuario={props.sesion.nombre}
+          />
         )}
         {props.modo == "Cancionando" && props.cancionActual && (
-          <Cancion cancion={props.cancionActual} />
+          <Cancion
+            dispatcher={props.dispatch}
+            cancion={props.cancionActual}
+            usuario={props.sesion.nombre}
+          />
+        )}
+        {props.modo == "Pisteando" && props.pistaActual && (
+          <Pista dispatcher={props.dispatch} pista={props.pistaActual} />
         )}
       </div>
     </div>
@@ -423,20 +774,3 @@ const App = (props) => {
 const connector = connect((state) => state);
 
 module.exports = connector(App);
-
-/*
-<h1 className="pa4 blue bg-yellow">React/Redux Counter Example</h1>
-<main className="pa4">
-  <div className="center tc">
-  <button onClick={e => props.dispatch({type:'INCR'})}>Increment</button>
-  <button onClick={e => props.dispatch({type: 'DECR'})}>Decrement</button>
-  </div>
-  <div className="mw5 center mt3 ba br2 tc pv3 f2">
-    {props.counter}
-  </div>
-  <hr />
-  <a href="https://glitch.com/edit/#!/react-redux-counter#README.md">
-    <img src="https://img.shields.io/badge/glitch-remix-green.svg" />
-  </a>
-</main>
-*/
