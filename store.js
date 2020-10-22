@@ -1,22 +1,29 @@
 const { createStore } = require("redux");
 const initialState = {
-  counter: 0,
-  canciones: [
-    { id: 1, nombre: "cancion1" },
-    { id: 2, nombre: "cancion2" },
-    { id: 3, nombre: "cancion3" },
-  ],
+  canciones: [],
+  grupos: null,
+  cancionActual: null,
+  modo: "Bienvenida",
+  sesion: null,
 };
 const rootReducer = (state = initialState, action) => {
   switch (action.type) {
-    case "INCR":
-      return { counter: state.counter + 1 };
-    case "DECR":
-      return { counter: state.counter - 1 };
+    case "NEW_SONG":
+      return {
+        ...state,
+        canciones: [action.nuevaCancion, ...state.canciones],
+        modo: action.modo,
+        cancionActual: action.nuevaCancion,
+      };
+    case "SELECT_SONG":
+      return { ...state, cancionActual: action.cancion, modo: action.modo };
+    case "CHANGE_MODE":
+      return { ...state, modo: action.modo };
+    case "LOGIN_LOGOUT":
+      return { ...state, sesion: action.sesion, modo: action.modo };
     default:
       return state;
   }
-  //return state
 };
 
 const store = createStore(rootReducer);
