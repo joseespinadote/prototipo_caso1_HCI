@@ -118,7 +118,7 @@ const MenuSuperior = (props) => {
         <span className="ml-2 font-weight-bold">MusicHub</span>
         <div className="float-right">
           <img
-            src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fmenu.png?v=1603311389171"
+            src="/imgs/menu.png"
             width="30px"
             onClick={() => {
               abreMenu();
@@ -183,16 +183,8 @@ const Cancion = (props) => {
           </small>
         </div>
         <div className="col">
-          <img
-            className="m-1"
-            src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fplay-icon.png?v=1603392461768"
-            width="25px"
-          />
-          <img
-            className="m-1"
-            src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fshare.png?v=1603384818355"
-            width="25px"
-          />
+          <img className="m-1" src="/imgs/play-icon.png" width="25px" />
+          <img className="m-1" src="/imgs/share.png" width="25px" />
         </div>
       </div>
       {props.cancion.pistas.length > 0 ? (
@@ -211,10 +203,7 @@ const Cancion = (props) => {
                 >
                   <img width="50px" src={item.icono} />
                   {item.nombre}
-                  <img
-                    width="100%"
-                    src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fwave.jpg?v=1603311447409"
-                  />
+                  <img width="100%" src="/imgs/wave.jpg" />
                 </li>
               );
             })}
@@ -283,7 +272,7 @@ const Cancion = (props) => {
         <div>
           <h3>¡Tu canción aún no tiene pistas!</h3>
           <button
-            className="btn btn-primary"
+            className="btn btn-primary m-2"
             type="button"
             onClick={() => {
               props.dispatcher({
@@ -364,20 +353,16 @@ const Pista = (props) => {
           <div
             className={
               "col-sm " +
-              (props.pista.icono ==
-              "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Ficono.png?v=1603311389277"
-                ? "bg-primary"
-                : "")
+              (props.pista.icono == "/imgs/icono.png" ? "bg-primary" : "")
             }
           >
             <img
               width="50px"
-              src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Ficono.png?v=1603311389277"
+              src="/imgs/icono.png"
               onClick={() => {
                 props.dispatcher({
                   type: "SET_TRACK_ICON",
-                  value:
-                    "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Ficono.png?v=1603311389277",
+                  value: "/imgs/icono.png",
                 });
               }}
             />
@@ -385,20 +370,18 @@ const Pista = (props) => {
           <div
             className={
               "col-sm " +
-              (props.pista.icono ==
-              "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fkeyboard_icon.png?v=1603311389334"
+              (props.pista.icono == "/imgs/keyboard_icon.png"
                 ? "bg-primary"
                 : "")
             }
           >
             <img
               width="50px"
-              src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fkeyboard_icon.png?v=1603311389334"
+              src="/imgs/keyboard_icon.png"
               onClick={() => {
                 props.dispatcher({
                   type: "SET_TRACK_ICON",
-                  value:
-                    "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fkeyboard_icon.png?v=1603311389334",
+                  value: "/imgs/keyboard_icon.png",
                 });
               }}
             />
@@ -406,20 +389,16 @@ const Pista = (props) => {
           <div
             className={
               "col-sm " +
-              (props.pista.icono ==
-              "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fdrums_icon.png?v=1603311389053"
-                ? "bg-primary"
-                : "")
+              (props.pista.icono == "/imgs/drums_icon.png" ? "bg-primary" : "")
             }
           >
             <img
               width="50px"
-              src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fdrums_icon.png?v=1603311389053"
+              src="/imgs/drums_icon.png"
               onClick={() => {
                 props.dispatcher({
                   type: "SET_TRACK_ICON",
-                  value:
-                    "https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fdrums_icon.png?v=1603311389053",
+                  value: "/imgs/drums_icon.png",
                 });
               }}
             />
@@ -427,14 +406,8 @@ const Pista = (props) => {
         </div>
       </div>
       <h3>¡Ha grabar! (no funciona)</h3>
-      <img
-        width="50%"
-        src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Frecording_buttons.png?v=1603384814975"
-      />
-      <img
-        width="100%"
-        src="https://cdn.glitch.com/19b7d8c8-65d2-4304-ab8e-f7a2b40719ce%2Fwave.jpg?v=1603311447409"
-      />
+      <img width="50%" src="/imgs/recording_buttons.png" />
+      <img width="100%" src="/imgs/wave.jpg" />
       <button
         disabled={!props.pista.nombre || !props.pista.icono}
         className="btn btn-primary m-2"
